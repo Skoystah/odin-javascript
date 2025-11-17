@@ -1,0 +1,19 @@
+.input-form {
+    display: flex;
+    gap: 10px;
+}
+
+ul {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+li {
+    margin-bottom: 10px;
+}
+
+
+li button {
+    margin-left: 20px;
+}
