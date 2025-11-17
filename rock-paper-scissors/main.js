@@ -1,64 +1,98 @@
 CHOICES = ['rock', 'paper', 'scissors'];
 
-
 function getComputerChoice() {
     return CHOICES[Math.floor(Math.random() * CHOICES.length)];
 }
 
-function getHumanChoice() {
-    let choice = -1;
-    while (choice < 0 || choice > 3) {
-        choice = parseInt(prompt(`Choose your move:\n
-        1) rock\n
-        2) paper\n
-        3) scissors\n`));
+function getHumanChoice(input) {
+    switch (input) {
+        case "player-choice-rock":
+            return "rock";
+        case "player-choice-paper":
+            return "paper";
+        case "player-choice-scissors":
+            return "scissors";
     }
-    return CHOICES[choice - 1]
 }
 
 function playRound(humanChoice, computerChoice) {
+    const gameLogs = document.querySelector("#game-log");
+    const roundResult = document.createElement("p");
+    let result;
+    let color;
+
     if (humanChoice === computerChoice) {
-        console.log(`A draw! ${humanChoice} vs ${computerChoice}`);
-        return null;
+        result = `A draw! ${humanChoice} vs ${computerChoice}`
     }
     else if (humanChoice === 'rock' && computerChoice === 'scissors' ||
         humanChoice === 'paper' && computerChoice === 'rock' ||
         humanChoice === 'scissors' && computerChoice === 'paper') {
-        console.log(`You win! ${humanChoice} vs ${computerChoice}`);
-        return "human";
+        result = `You win! ${humanChoice} vs ${computerChoice}`
+        color = "green";
+        humanScore += 1;
     } else {
-        console.log(`You lose :( ${humanChoice} vs ${computerChoice}`);
-        return "computer";
+        result = `You lose :( ${humanChoice} vs ${computerChoice}`
+        color = "red";
+        computerScore += 1;
+    }
+    roundResult.textContent = result;
+    roundResult.style.color = color;
+    gameLogs.appendChild(roundResult);
+}
+
+function playMove(e) {
+    if (humanScore >= 5 || computerScore >= 5) {
+        resetGame();
+    }
+    playRound(getHumanChoice(e.target.id),
+        getComputerChoice()
+    );
+    displayScore();
+    checkWinner();
+}
+
+function resetGame() {
+    humanScore = 0;
+    computerScore = 0;
+    const gameLogs = document.querySelector("#game-log");
+    while (gameLogs.firstChild) {
+        gameLogs.removeChild(gameLogs.firstChild);
     }
 }
 
-function playGame() {
-
-    let humanScore = 0;
-    let computerScore = 0;
-
-
-    for (let i = 0; i < 5; i++) {
-        let winner = playRound(getHumanChoice(), getComputerChoice());
-        if (!winner) {
-            continue;
-        }
-        if (winner === "human") {
-            humanScore++;
-        } else {
-            computerScore++;
-        }
-    }
-
-    console.log(`Score: you have ${humanScore} vs computer ${computerScore}`);
-    if (humanScore > computerScore) {
-        console.log('You win!');
-    } else if (humanScore < computerScore) {
-        console.log('The computer wins :(');
-    } else {
-        console.log('It\'s a draw.');
-    }
+function displayScore() {
+    const gameScore = document.querySelector("#game-score");
+    gameScore.textContent = `Human: ${humanScore} | Computer: ${computerScore}`;
 }
 
-playGame();
+function checkWinner() {
+    const gameLogs = document.querySelector("#game-log");
+    const gameFinalResult = document.createElement("p");
+
+    if (humanScore === 5) {
+        gameFinalResult.textContent = "Congratulations, you have won!"
+        gameFinalResult.style.fontWeight = "bold";
+        gameFinalResult.style.color = "green";
+    } else if (computerScore === 5) {
+        gameFinalResult.textContent = "Sorry, you lose :'("
+        gameFinalResult.style.fontWeight = "bold";
+        gameFinalResult.style.color = "red";
+    } else {
+        return;
+    }
+
+    gameLogs.appendChild(gameFinalResult);
+}
+
+// DOM
+
+const buttons = document.querySelectorAll(".player-choice button");
+buttons.forEach(button => button.addEventListener("click", playMove));
+
+
+// UI
+let humanScore = 0;
+let computerScore = 0;
+
+displayScore();
 

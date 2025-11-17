@@ -1,0 +1,5 @@
+.player-choice {
+    display: flex;
+    gap: 10px;
+    padding: 20px;
+}
