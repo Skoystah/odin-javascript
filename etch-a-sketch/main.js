@@ -1,6 +1,6 @@
 const DEFAULT_COLOR = "black-white";
 const DEFAULT_GRIDSIZE = 50;
-const MIN_GRIDSIZE = 100;
+const MIN_GRIDSIZE = 1;
 const MAX_GRIDSIZE = 100;
 const OPACITY_INCREMENT = 0.1;
 
@@ -11,15 +11,25 @@ function setup() {
 }
 
 function newDrawing() {
-    let gridSize = parseInt(prompt("Enter new drawing size (default = 50x50):"));
-    while (gridSize < MIN_GRIDSIZE || gridSize > MAX_GRIDSIZE) {
-        if (gridSize === null || isNaN(gridSize)) {
+    let gridSize;
+
+    while (true) {
+        gridSize = prompt(`Please enter a size between ${MIN_GRIDSIZE} and ${MAX_GRIDSIZE}`);
+
+        if (gridSize === null) {
             gridSize = DEFAULT_GRIDSIZE;
+            break
+        }
+
+        if (isNaN(gridSize)) {
+            continue
         } else {
-            gridSize = parseInt(prompt("Grid size must be between 1 and 100. \nEnter drawing size (x by x):"));
+            gridSize = parseInt(gridSize);
+            if (gridSize >= MIN_GRIDSIZE && gridSize <= MAX_GRIDSIZE) {
+                break
+            }
         }
     }
-
     drawGrid(gridSize, getColorChoice());
 }
 
