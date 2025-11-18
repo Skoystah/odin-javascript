@@ -4,10 +4,20 @@ const MIN_GRIDSIZE = 1;
 const MAX_GRIDSIZE = 100;
 const OPACITY_INCREMENT = 0.1;
 
+let currentGridSize = DEFAULT_GRIDSIZE;
+let currentColor = DEFAULT_COLOR;
+
 function setup() {
     const newDrawingButton = document.querySelector("#new-drawing-button")
     newDrawingButton.addEventListener("click", newDrawing);
-    drawGrid(DEFAULT_GRIDSIZE, DEFAULT_COLOR);
+
+    const resetButton = document.querySelector("#reset-button")
+    resetButton.addEventListener("click", drawGrid);
+
+    const colorButtons = document.querySelectorAll("[name=color-choice]");
+    colorButtons.forEach(button => button.addEventListener("change", getColorChoice));
+
+    drawGrid();
 }
 
 function newDrawing() {
@@ -30,7 +40,10 @@ function newDrawing() {
             }
         }
     }
-    drawGrid(gridSize, getColorChoice());
+    currentGridSize = gridSize;
+    getColorChoice()
+
+    drawGrid();
 }
 
 function getColorChoice() {
@@ -42,25 +55,23 @@ function getColorChoice() {
             break;
         }
     }
-    return color ? color : DEFAULT_COLOR;
+    currentColor = color ? color : DEFAULT_COLOR;
+    console.log(`Setting color to ${currentColor}`);
 }
 
 function hoverSquare(event) {
     if (event.target.className === "square") {
-        console.log(`square ${event.target.dataset.coordinate}`);
         colorSquare(event.target);
     }
 }
 
 function colorSquare(square) {
     const currentOpacity = parseFloat(window.getComputedStyle(square).opacity);
-    console.log("Current opacity", currentOpacity);
     if (currentOpacity < 1) {
         square.style.opacity = currentOpacity + OPACITY_INCREMENT;
     }
 
-    const gridContainer = document.querySelector(".grid-container");
-    if (gridContainer.dataset.drawingColor === "random") {
+    if (currentColor === "random") {
         square.style.backgroundColor = getRandomColor();
     } else {
         square.style.backgroundColor = "black";
@@ -86,26 +97,25 @@ function getSquareSize(grid, gridSize) {
     return Math.floor(gridWidth / gridSize);
 }
 
-function cleanGrid(gridContainer) {
+function cleanGrid() {
+    const gridContainer = document.querySelector(".grid-container");
     while (gridContainer.firstChild) {
         gridContainer.removeChild(gridContainer.firstChild);
     }
 }
 
-function drawGrid(gridSize, drawingColor) {
+function drawGrid() {
     const gridContainer = document.querySelector(".grid-container");
-    cleanGrid(gridContainer);
+    cleanGrid();
 
     setHover(gridContainer);
-    gridContainer.dataset.drawingColor = drawingColor;
 
-    const squareSize = getSquareSize(gridContainer, gridSize);
+    const squareSize = getSquareSize(gridContainer, currentGridSize);
     console.log(squareSize);
-    for (let i = 0; i < gridSize; i++) {
-        for (let j = 0; j < gridSize; j++) {
+    for (let i = 0; i < currentGridSize; i++) {
+        for (let j = 0; j < currentGridSize; j++) {
             const div = document.createElement("div");
             div.className = "square";
-            div.dataset.coordinate = [i, j];
             div.style.width = `${squareSize}px`;
             div.style.height = `${squareSize}px`;
             div.style.opacity = 0;
