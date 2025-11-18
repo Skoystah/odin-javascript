@@ -1,15 +1,19 @@
-DEFAULT_COLOR = "black-white";
-DEFAULT_GRIDSIZE = 50;
+const DEFAULT_COLOR = "black-white";
+const DEFAULT_GRIDSIZE = 50;
+const MIN_GRIDSIZE = 100;
+const MAX_GRIDSIZE = 100;
+const OPACITY_INCREMENT = 0.1;
 
 function setup() {
     const newDrawingButton = document.querySelector("#new-drawing-button")
     newDrawingButton.addEventListener("click", newDrawing);
+    drawGrid(DEFAULT_GRIDSIZE, DEFAULT_COLOR);
 }
 
 function newDrawing() {
     let gridSize = parseInt(prompt("Enter new drawing size (default = 50x50):"));
-    while (gridSize <= 0 || gridSize > 100) {
-        if (!gridSize) {
+    while (gridSize < MIN_GRIDSIZE || gridSize > MAX_GRIDSIZE) {
+        if (gridSize === null || isNaN(gridSize)) {
             gridSize = DEFAULT_GRIDSIZE;
         } else {
             gridSize = parseInt(prompt("Grid size must be between 1 and 100. \nEnter drawing size (x by x):"));
@@ -42,7 +46,7 @@ function colorSquare(square) {
     const currentOpacity = parseFloat(window.getComputedStyle(square).opacity);
     console.log("Current opacity", currentOpacity);
     if (currentOpacity < 1) {
-        square.style.opacity = currentOpacity + 0.1;
+        square.style.opacity = currentOpacity + OPACITY_INCREMENT;
     }
 
     const gridContainer = document.querySelector(".grid-container");
@@ -62,10 +66,10 @@ function getRandomColor() {
 }
 
 function getSquareSize(grid, gridSize) {
-    re = /\d+/;
+    const re = /\d+/;
     const gridWidth = parseInt(window.getComputedStyle(grid).width.match(re)[0]);
     if (!gridWidth) {
-        console.warning("Cannot read grid width");
+        console.warn("Cannot read grid width");
         return;
     }
 
