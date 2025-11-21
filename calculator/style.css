@@ -1,0 +1,24 @@
+* {
+    border: 1px solid red;
+}
+
+.calculator {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.display {
+    text-align: end;
+}
+
+.button-row {
+    display: flex;
+    gap: 5px;
+    justify-content: space-between;
+}
+
+button {
+    flex: 1;
+}
