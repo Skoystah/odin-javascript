@@ -2,8 +2,10 @@ let num1;
 let num2;
 let storedOperator;
 let currentNumber = "";
+let currentNumberFloat = false;
 const OPERATORS = ['+', '-', '/', '*', '='];
 const DISPLAY_SIZE = 10;
+const DECIMAL_SIGN = ".";
 
 
 function add(num1, num2) {
@@ -36,10 +38,13 @@ function operate(num1, operator, num2) {
 }
 
 function updateNumber(digit) {
+    if (currentNumberFloat) {
+        if (!currentNumber.includes(DECIMAL_SIGN)) {
+            currentNumber += DECIMAL_SIGN;
+        }
+    }
     currentNumber += digit;
 }
-
-
 
 function updateDisplay(content) {
     display.textContent = content;
@@ -47,11 +52,11 @@ function updateDisplay(content) {
 
 function updateResult(number) {
     if (!num1) {
-        num1 = parseInt(number);
+        num1 = parseFloat(number);
     } else {
-        num2 = parseInt(number);
+        num2 = parseFloat(number);
     }
-    currentNumber = "";
+    clearCurrentNumber();
 }
 
 function storeResult(number) {
@@ -59,7 +64,7 @@ function storeResult(number) {
 }
 
 function isFloat(number) {
-    return (number % 1 !== number) ? true : false;
+    return number % 1 !== 0;
 }
 
 
@@ -67,7 +72,11 @@ function roundResult(number) {
     if (!isFloat(number)) return number;
 
     const [main, decimals] = String(number).split('.');
+    if (!decimals) {
+        return number;
+    }
     const max_decimals = DISPLAY_SIZE - 1 - main.length;
+    console.log(decimals, max_decimals)
     if (decimals.length > max_decimals) {
         return number.toFixed(max_decimals);
     }
@@ -84,16 +93,20 @@ function calculateResult() {
         updateDisplay(result);
     } catch (error) {
         alert(error);
-        // updateDisplay(error);
     }
 }
 
 function clearAll() {
-    currentNumber = "";
+    clearCurrentNumber();
     num1 = undefined;
     num2 = undefined;
     operator = "";
     updateDisplay(currentNumber);
+}
+
+function clearCurrentNumber() {
+    currentNumber = "";
+    currentNumberFloat = false;
 }
 
 function processInput(e) {
@@ -108,6 +121,8 @@ function processButton(value) {
     console.log(`entering value ${value}`)
     if (!isNaN(value)) {
         processDigit(value);
+    } else if (value === ".") {
+        processFloat();
     } else if (value === "AC") {
         clearAll();
     } else if (OPERATORS.includes(value)) {
@@ -150,6 +165,7 @@ function processKey(e) {
         case "/":
         case "*":
         case "=":
+        case ".":
             processButton(e.key);
             break;
         case "Enter":
@@ -163,7 +179,12 @@ function processKey(e) {
 
 function processDigit(digit) {
     updateNumber(digit);
+
     updateDisplay(currentNumber);
+}
+
+function processFloat() {
+    currentNumberFloat = true;
 }
 
 const buttons = document.querySelectorAll("button");
