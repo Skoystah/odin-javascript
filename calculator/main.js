@@ -3,6 +3,7 @@ let num2;
 let storedOperator;
 let currentNumber = "";
 const OPERATORS = ['+', '-', '/', '*', '='];
+const DISPLAY_SIZE = 10;
 
 
 function add(num1, num2) {
@@ -15,31 +16,29 @@ function multiply(num1, num2) {
     return num1 * num2;
 }
 function divide(num1, num2) {
+    if (num2 === 0) {
+        throw new Error("You no can divide by 0!");
+    }
     return num1 / num2;
 }
 
 function operate(num1, operator, num2) {
-    let result;
     switch (operator) {
         case ('+'):
-            result = add(num1, num2);
-            break;
+            return add(num1, num2);
         case ('-'):
-            result = subtract(num1, num2);
-            break;
+            return subtract(num1, num2);
         case ('*'):
-            result = multiply(num1, num2);
-            break;
+            return multiply(num1, num2);
         case ('/'):
-            result = divide(num1, num2);
-            break;
+            return divide(num1, num2);
     }
-    return result;
 }
 
 function updateNumber(digit) {
     currentNumber += digit;
 }
+
 
 
 function updateDisplay(content) {
@@ -59,11 +58,34 @@ function storeResult(number) {
     num1 = number;
 }
 
+function isFloat(number) {
+    return (number % 1 !== number) ? true : false;
+}
+
+
+function roundResult(number) {
+    if (!isFloat(number)) return number;
+
+    const [main, decimals] = String(number).split('.');
+    const max_decimals = DISPLAY_SIZE - 1 - main.length;
+    if (decimals.length > max_decimals) {
+        return number.toFixed(max_decimals);
+    }
+    return number;
+
+}
+
 function calculateResult() {
-    const result = operate(num1, storedOperator, num2)
-    console.log(`result ${num1} ${storedOperator} ${num2} = ${result}`)
-    storeResult(result);
-    updateDisplay(result);
+    try {
+        let result = operate(num1, storedOperator, num2)
+        console.log(`result ${num1} ${storedOperator} ${num2} = ${result}`)
+        result = roundResult(result);
+        storeResult(result);
+        updateDisplay(result);
+    } catch (error) {
+        alert(error);
+        // updateDisplay(error);
+    }
 }
 
 function clearAll() {
@@ -130,6 +152,9 @@ function processKey(e) {
         case "=":
             processButton(e.key);
             break;
+        case "Enter":
+            processButton("=");
+            break;
         case "Delete":
             processButton("AC");
             break;
@@ -142,7 +167,7 @@ function processDigit(digit) {
 }
 
 const buttons = document.querySelectorAll("button");
-buttons.forEach(button => button.addEventListener("click", processButton));
+buttons.forEach(button => button.addEventListener("click", processInput));
 
 const display = document.querySelector(".display");
 updateDisplay(currentNumber);
