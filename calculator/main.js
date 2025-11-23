@@ -100,7 +100,7 @@ function clearAll() {
     clearCurrentNumber();
     num1 = undefined;
     num2 = undefined;
-    operator = "";
+    storedOperator = "";
     updateDisplay(currentNumber);
 }
 
@@ -135,7 +135,7 @@ function processOperator(operator) {
     // still a pending number to process as operand
     if (currentNumber) {
         updateResult(currentNumber);
-        if (num2) {
+        if (num2 !== undefined) {
             calculateResult();
         }
     } else if (operator === '=') {
