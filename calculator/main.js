@@ -113,7 +113,7 @@ function processInput(e) {
     if (e.type === "keydown") {
         processKey(e.key);
     } else {
-        processButton(this.value);
+        processButton(this.dataset.input);
     }
 }
 //
