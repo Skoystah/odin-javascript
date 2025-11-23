@@ -78,9 +78,9 @@ function roundResult(number) {
     const max_decimals = DISPLAY_SIZE - 1 - main.length;
     console.log(decimals, max_decimals)
     if (decimals.length > max_decimals) {
-        return number.toFixed(max_decimals);
+        return parseFloat(number.toFixed(max_decimals));
     }
-    return number;
+    return parseFloat(number);
 
 }
 
